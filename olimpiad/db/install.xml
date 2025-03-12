@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/olimpiad/db" VERSION="20250312" COMMENT="XMLDB file for Moodle blocks/olimpiad"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="olympic" COMMENT="Default comment for block_olimpiad, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="title" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="date_start" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="start date of the Olympiad"/>
+        <FIELD NAME="date_finish" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="finish date of the Olympiad"/>
+        <FIELD NAME="desc" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primaryid" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="staff" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="login" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="123" SEQUENCE="false"/>
+        <FIELD NAME="first_name" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="middle_name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="login"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="abiturients" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="login" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="123" SEQUENCE="false"/>
+        <FIELD NAME="namef" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="namei" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="nameo" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="city" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="phone" TYPE="char" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="olympiads" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Participates or does not participate"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="login"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="record" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="numrec" TYPE="int" LENGTH="7" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="id_olympic" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="id_abiturient" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="date" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="numrec"/>
+        <KEY NAME="fk_olim" TYPE="foreign" FIELDS="id_olympic" REFTABLE="olympic" REFFIELDS="id"/>
+        <KEY NAME="fk_ab" TYPE="foreign" FIELDS="id_abiturient" REFTABLE="abiturients" REFFIELDS="login"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
