@@ -1,63 +1,78 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * Block definition class for the block_pluginname plugin.
- *
- * @package   block_pluginname
- * @copyright Year, You Name <your@email.address>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/form_olimpiad.php');
 
 class block_olimpiad extends block_base {
-    //defined('MOODLE_INTERNAL') || die();
-
     public function init() {
-        $this->title = get_string('plaginname', 'blok_olimpiad');
-        //$this->title = get_string('plaginname');//, 'blok_olimpiad');
+        $this->title = get_string('pluginname', 'block_olimpiad');
     }
 
     public function get_content() {
+        global $DB, $OUTPUT;
 
-        //global $OUTPUT;
-        // проверка содержания
+        // Кеширование содержимого
         if ($this->content !== null) {
             return $this->content;
         }
-        
-        // подключение бд
-        global $DB;
-        
-        // Получение данных из базы
-        // Формирование списка олимпиад.
-        if ($olympiads) {
-            $this->content->text .= '<ul>';
-            foreach ($olympiads as $olympiad) {
-                $this->content->text .= '<li>' . htmlspecialchars($olympiad->TITLE) . '</li>'; // Вывод названия олимпиады.
+
+        $this->content = (object) ['text' => ''];
+        $myform = new olimpiad_form();
+
+        // Обработка данных формы
+        if ($myform->is_cancelled()) {
+            // Действия при отмене (например, редирект)
+            redirect(new moodle_url('/my/index.php'));
+        } elseif ($data = $myform->get_data()) {
+            // Сохранение данных в БД
+            $record = new stdClass();
+            $record->title = $data->title;
+            $record->date_start = $data->date_start;
+            $record->date_finish = $data->date_start;
+            $record->descr = $data->descr;
+
+            if (!empty($data->id)) {
+                $record->id = $data->id;
+                $DB->update_record('olympic', $record);
+            } else {
+                $DB->insert_record('olympic', $record);
             }
-            $this->content->text .= '</ul>';
-        } else {
-            $this->content->text .= get__string('no__olympiads', 'block__olimpiad'); // Сообщение, если олимпиад нет.
         }
 
-        return $this->content; // Возвращаем содержимое блока.
+        // Отображение таблицы с олимпиадами
+        $table = new html_table();
+        $table->head = [
+            get_string('id', 'block_olimpiad'),
+            get_string('title', 'block_olimpiad'),
+            get_string('date_start', 'block_olimpiad'),
+            get_string('date_finish', 'block_olimpiad'),
+            get_string('descr', 'block_olimpiad'),
+            get_string('actions', 'block_olimpiad')
+        ];
+
+        $olympics = $DB->get_records('olympic');
+        foreach ($olympics as $olympic) {
+            $edit_url = new moodle_url('/blocks/olimpiad/edit.php', ['id' => $olympic->id]);
+            $delete_url = new moodle_url('/blocks/olimpiad/delete.php', ['id' => $olympic->id]);
+
+            $table->data[] = [
+                $olympic->id,
+                $olympic->title,
+                userdate($olympic->date_start, get_string('strftimedate', 'langconfig')), // Форматирование даты
+                userdate($olympic->date_finish, get_string('strftimedate', 'langconfig')),
+                shorten_text($olympic->descr, 30), // Обрезаем длинный текст
+                $OUTPUT->action_icon($edit_url, new pix_icon('t/edit', get_string('edit'))) . ' ' .
+                $OUTPUT->action_icon($delete_url, new pix_icon('t/delete', get_string('delete')))
+            ];
+        }
+
+        // Сборка итогового содержимого
+        $this->content->text = $myform->render() . html_writer::table($table);
+        return $this->content;
     }
 
-    public function has__config() {
-        return true; // Указывает, что блок может иметь настройки.
+    public function has_config() {
+        return true;
     }
 }
 ?>

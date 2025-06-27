@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/olimpiad/db" VERSION="20250312" COMMENT="XMLDB file for Moodle blocks/olimpiad"
+<XMLDB PATH="blocks/olimpiad/db" VERSION="20250322" COMMENT="XMLDB file for Moodle blocks/olimpiad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -8,9 +8,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="title" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="date_start" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="start date of the Olympiad"/>
-        <FIELD NAME="date_finish" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="finish date of the Olympiad"/>
-        <FIELD NAME="desc" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="date_start" TYPE="int" NOTNULL="true" SEQUENCE="false" COMMENT="start date of the Olympiad"/>
+        <FIELD NAME="date_finish" TYPE="int" NOTNULL="false" SEQUENCE="false" COMMENT="finish date of the Olympiad"/>
+        <FIELD NAME="descr" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primaryid" TYPE="primary" FIELDS="id"/>
